@@ -1,0 +1,790 @@
+<!DOCTYPE html><html lang="pt-BR" class="!scroll-smooth"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Feliz Natal Lucrativo</title>
+  <meta name="description" content="Aprenda a criar enfeites natalinos em amigurumi e fature neste Natal.">
+  <link rel="icon" href="images/christmas-tree.png" type="image/png">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="true">
+  <link href="https://fonts.googleapis.com/css2?family=Alegreya:wght@400;700&family=Belleza&display=swap" rel="stylesheet">
+
+  <!-- Estilos Customizados -->
+  <style>
+    /* Custom styles for fonts and animations */
+    body {
+      font-family: 'Alegreya', serif;
+      scroll-behavior: smooth;
+    }
+
+    .font-headline {
+      font-family: 'Belleza', sans-serif;
+    }
+
+    /* Animation for pulsing buttons */
+    @keyframes gentle-pulse {
+      0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+      }
+      50% {
+        transform: scale(1.05);
+        box-shadow: 0 10px 15px -3px rgba(168, 85, 247, 0.4), 0 4px 6px -4px rgba(168, 85, 247, 0.4);
+      }
+    }
+
+    .animate-gentle-pulse {
+      animation: gentle-pulse 2.5s infinite;
+    }
+    
+    .animate-gentle-pulse-primary {
+        animation: gentle-pulse-primary 2.5s infinite;
+    }
+
+    @keyframes gentle-pulse-primary {
+      0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+      }
+      50% {
+        transform: scale(1.05);
+        box-shadow: 0 10px 15px -3px rgba(74, 94, 74, 0.4), 0 4px 6px -4px rgba(74, 94, 74, 0.4);
+      }
+    }
+    
+    .animate-gentle-pulse-accent {
+        animation: gentle-pulse-accent 2.5s infinite;
+    }
+
+    @keyframes gentle-pulse-accent {
+      0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+      }
+      50% {
+        transform: scale(1.05);
+        box-shadow: 0 10px 15px -3px rgba(217, 119, 6, 0.4), 0 4px 6px -4px rgba(217, 119, 6, 0.4);
+      }
+    }
+
+    /* Adicionando transições para suavidade */
+    .transition-all-smooth {
+        transition: all 0.3s ease-in-out;
+    }
+
+    /* Efeito de neve */
+    #snow-canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 9999;
+        pointer-events: none; /* Importante para não bloquear cliques */
+    }
+  </style>
+
+  <!-- Configuração do Tailwind -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            background: '#FEFBF6',
+            foreground: '#3D3C3A',
+            primary: {
+              DEFAULT: '#4A5E4A',
+              foreground: '#FEFBF6',
+            },
+            secondary: {
+              DEFAULT: '#EAE7E1',
+              foreground: '#4A5E4A',
+            },
+            accent: {
+              DEFAULT: '#D97706',
+              foreground: '#FEFBF6',
+            },
+            purple: {
+                DEFAULT: '#A855F7',
+                foreground: '#FEFBF6'
+            },
+            muted: {
+                DEFAULT: '#F5F5F4',
+                foreground: '#71717A',
+            }
+          },
+        }
+      }
+    }
+  </script>
+</head>
+
+<body class="bg-background text-foreground antialiased">
+  <!-- Efeito de Neve e Música de Fundo -->
+  <canvas id="snow-canvas"></canvas>
+  <!-- 
+    NOTA: O player de música está funcional, mas precisa de uma URL de um arquivo MP3 válido.
+    Substitua a propriedade 'src' abaixo por um link para sua música de Natal.
+    Ex: <source src="https://example.com/sua-musica.mp3" type="audio/mpeg">
+  -->
+  <audio id="background-music" loop="">
+    <source src="" type="audio/mpeg">
+    Seu navegador não suporta o elemento de áudio.
+  </audio>
+
+  <div class="flex flex-col min-h-screen overflow-x-hidden">
+    <!-- Header com Countdown Timer -->
+    <header class="bg-primary text-primary-foreground py-2 sticky top-0 z-50 shadow-md">
+      <div id="countdown-banner" class="container mx-auto flex flex-col md:flex-row items-center justify-center gap-2 md:gap-4 px-4">
+        <p class="font-headline text-base text-center md:text-lg">Inscrições abertas! A oferta termina em:</p>
+        <div id="countdown-timer" class="flex items-center justify-center space-x-2 text-center font-bold">
+          <div class="p-1 bg-white/20 rounded-md min-w-[50px]"><span id="days" class="text-xl">00</span><span class="text-xs block">Dias</span></div>
+          <div class="p-1 bg-white/20 rounded-md min-w-[50px]"><span id="hours" class="text-xl">00</span><span class="text-xs block">Horas</span></div>
+          <div class="p-1 bg-white/20 rounded-md min-w-[50px]"><span id="minutes" class="text-xl">00</span><span class="text-xs block">Min</span></div>
+          <div class="p-1 bg-white/20 rounded-md min-w-[50px]"><span id="seconds" class="text-xl">00</span><span class="text-xs block">Seg</span></div>
+        </div>
+      </div>
+    </header>
+    
+    <main class="flex-1">
+      <!-- Banner Adicional -->
+      <section class="w-full bg-background">
+        <a href="#pricing" class="block">
+          <img src="images/ZLgG0Y0.jpeg" alt="Banner de promoção do curso Feliz Natal Lucrativo" class="w-full h-auto">
+        </a>
+      </section>
+
+      <!-- CTA Section Repetida -->
+      <section class="w-full py-12 md:py-16 bg-background">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="flex flex-col items-center text-center bg-background p-8 rounded-lg max-w-3xl mx-auto shadow-lg border">
+                <img alt="Feliz Natal Lucrativo Logo" loading="lazy" width="158" height="79" class="mb-4 w-[158px]" src="images/mDyoEVB.png">
+                <h2 class="font-headline text-3xl font-bold text-primary drop-shadow-md md:text-4xl leading-tight">
+                    Aprenda a fazer enfeites lindos e vendáveis em amigurumi e tenha um Natal mágico e lucrativo, mesmo que você nunca tenha feito crochê antes!
+                </h2>
+                <div class="my-4 h-1 w-24 border-t-2 border-dashed border-accent"></div>
+                <p class="text-base text-foreground/90 drop-shadow-md md:text-lg">
+                    Estão abertas as inscrições para o curso Feliz Natal Lucrativo, onde você vai aprender a criar uma coleção incrível com 25 enfeites natalinos que vão tornar o seu Natal ainda mais especial e mágico.
+                </p>
+                <a href="#pricing" class="inline-flex items-center justify-center gap-2 mt-8 rounded-md px-8 h-14 text-lg bg-primary text-primary-foreground shadow-lg transition-transform hover:scale-105 hover:bg-primary/90 animate-gentle-pulse-primary font-bold">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2 h-5 w-5 fill-amber-300 text-amber-500">
+                        <path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path>
+                    </svg>
+                    QUERO ME INSCREVER AGORA
+                </a>
+            </div>
+        </div>
+      </section>
+
+      <!-- Gallery Section -->
+      <section id="gallery" class="w-full py-12 md:py-24 lg:py-32 bg-primary/5">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="flex flex-col items-center justify-center space-y-4 text-center">
+                <div class="space-y-2">
+                    <div class="inline-block rounded-lg bg-primary/10 px-3 py-1 text-sm font-medium text-primary">Galeria de Amigurumis</div>
+                    <h2 class="font-headline text-3xl font-bold tracking-tighter sm:text-5xl text-primary">+de 25 Criações Mágicas de Natal</h2>
+                    <p class="max-w-[900px] text-foreground/80 md:text-xl/relaxed">Explore uma <strong>prévia</strong> dos encantadores enfeites que você aprenderá a crochetar. Clique em uma imagem para ver em detalhes.</p>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mt-12">
+                <!-- Gallery Images -->
+                <div class="gallery-item group relative cursor-pointer overflow-hidden rounded-lg shadow-lg transition-all-smooth hover:shadow-2xl hover:-translate-y-1"><img alt="Enfeite de amigurumi de Menina Noel com vestido vermelho." class="aspect-square w-full object-cover transition-transform duration-300 group-hover:scale-110" src="images/DjkfEy9.png"><div class="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100"><div class="rounded-full bg-white/80 p-3"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-8 w-8 text-primary"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"></path><circle cx="12" cy="12" r="3"></circle></svg></div></div></div>
+                <div class="gallery-item group relative cursor-pointer overflow-hidden rounded-lg shadow-lg transition-all-smooth hover:shadow-2xl hover:-translate-y-1"><img alt="Enfeite de amigurumi de Rena com cachecol verde." class="aspect-square w-full object-cover transition-transform duration-300 group-hover:scale-110" src="images/7uX6So0.jpeg"><div class="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100"><div class="rounded-full bg-white/80 p-3"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-8 w-8 text-primary"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"></path><circle cx="12" cy="12" r="3"></circle></svg></div></div></div>
+                <div class="gallery-item group relative cursor-pointer overflow-hidden rounded-lg shadow-lg transition-all-smooth hover:shadow-2xl hover:-translate-y-1"><img alt="Enfeite de amigurumi de Papai Noel tradicional." class="aspect-square w-full object-cover transition-transform duration-300 group-hover:scale-110" src="images/QG1dD06.jpeg"><div class="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100"><div class="rounded-full bg-white/80 p-3"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-8 w-8 text-primary"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"></path><circle cx="12" cy="12" r="3"></circle></svg></div></div></div>
+                <div class="gallery-item group relative cursor-pointer overflow-hidden rounded-lg shadow-lg transition-all-smooth hover:shadow-2xl hover:-translate-y-1"><img alt="Enfeite de amigurumi de Mamãe Noel com coque." class="aspect-square w-full object-cover transition-transform duration-300 group-hover:scale-110" src="images/Gbq1eDP.jpeg"><div class="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100"><div class="rounded-full bg-white/80 p-3"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-8 w-8 text-primary"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"></path><circle cx="12" cy="12" r="3"></circle></svg></div></div></div>
+                <div class="gallery-item group relative cursor-pointer overflow-hidden rounded-lg shadow-lg transition-all-smooth hover:shadow-2xl hover:-translate-y-1"><img alt="Enfeite de amigurumi de Elfo ajudante de Papai Noel." class="aspect-square w-full object-cover transition-transform duration-300 group-hover:scale-110" src="images/5yzwha9.jpeg"><div class="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100"><div class="rounded-full bg-white/80 p-3"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-8 w-8 text-primary"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"></path><circle cx="12" cy="12" r="3"></circle></svg></div></div></div>
+                <div class="gallery-item group relative cursor-pointer overflow-hidden rounded-lg shadow-lg transition-all-smooth hover:shadow-2xl hover:-translate-y-1"><img alt="Enfeite de amigurumi de Biscoito de Gengibre sorridente." class="aspect-square w-full object-cover transition-transform duration-300 group-hover:scale-110" src="images/d906pid.jpeg"><div class="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100"><div class="rounded-full bg-white/80 p-3"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-8 w-8 text-primary"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"></path><circle cx="12" cy="12" r="3"></circle></svg></div></div></div>
+                <div class="gallery-item group relative cursor-pointer overflow-hidden rounded-lg shadow-lg transition-all-smooth hover:shadow-2xl hover:-translate-y-1"><img alt="Enfeite de amigurumi de anjo com asas douradas." class="aspect-square w-full object-cover transition-transform duration-300 group-hover:scale-110" src="images/yR8EXs2.jpeg"><div class="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100"><div class="rounded-full bg-white/80 p-3"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-8 w-8 text-primary"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"></path><circle cx="12" cy="12" r="3"></circle></svg></div></div></div>
+                <div class="gallery-item group relative cursor-pointer overflow-hidden rounded-lg shadow-lg transition-all-smooth hover:shadow-2xl hover:-translate-y-1"><img alt="Enfeite de amigurumi de boneco de neve com chapéu." class="aspect-square w-full object-cover transition-transform duration-300 group-hover:scale-110" src="images/qK72gfC.jpeg"><div class="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100"><div class="rounded-full bg-white/80 p-3"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-8 w-8 text-primary"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"></path><circle cx="12" cy="12" r="3"></circle></svg></div></div></div>
+                <div class="gallery-item group relative cursor-pointer overflow-hidden rounded-lg shadow-lg transition-all-smooth hover:shadow-2xl hover:-translate-y-1"><img alt="Enfeite de amigurumi de pinguim com gorro natalino." class="aspect-square w-full object-cover transition-transform duration-300 group-hover:scale-110" src="images/h5M3T3Q.jpeg"><div class="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100"><div class="rounded-full bg-white/80 p-3"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-8 w-8 text-primary"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"></path><circle cx="12" cy="12" r="3"></circle></svg></div></div></div>
+                <div class="gallery-item group relative cursor-pointer overflow-hidden rounded-lg shadow-lg transition-all-smooth hover:shadow-2xl hover:-translate-y-1"><img alt="Enfeite de amigurumi de árvore de Natal decorada." class="aspect-square w-full object-cover transition-transform duration-300 group-hover:scale-110" src="images/M6TazcK.jpeg"><div class="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100"><div class="rounded-full bg-white/80 p-3"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-8 w-8 text-primary"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"></path><circle cx="12" cy="12" r="3"></circle></svg></div></div></div>
+            </div>
+        </div>
+      </section>
+
+      <!-- AI Mentor Section -->
+      <section id="ai-mentor" class="w-full py-12 md:py-24 lg:py-32 bg-primary text-primary-foreground">
+        <div class="container mx-auto grid lg:grid-cols-2 gap-12 items-center px-4 md:px-6">
+            <div class="flex flex-col justify-center space-y-6">
+                <div class="inline-flex items-center rounded-full border border-transparent bg-secondary text-secondary-foreground w-fit px-2.5 py-0.5 text-xs font-semibold">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 mr-2"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"></path><path d="M9 13a4.5 4.5 0 0 0 3-4"></path><path d="M6.003 5.125A3 3 0 0 0 6.401 6.5"></path><path d="M3.477 10.896a4 4 0 0 1 .585-.396"></path><path d="M6 18a4 4 0 0 1-1.967-.516"></path><path d="M12 13h4"></path><path d="M12 18h6a2 2 0 0 1 2 2v1"></path><path d="M12 8h8"></path><path d="M16 8V5a2 2 0 0 1 2-2"></path><circle cx="16" cy="13" r=".5"></circle><circle cx="18" cy="3" r=".5"></circle><circle cx="20" cy="21" r=".5"></circle><circle cx="20" cy="8" r=".5"></circle></svg>Seu suporte no crochê
+                </div>
+                <h2 class="font-headline text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-white">Você não vai aprender sozinha.</h2>
+                <p class="max-w-[600px] text-primary-foreground/90 md:text-xl/relaxed">Com o Amiguruxos, você nunca fica sozinha no crochê:</p>
+                <ul class="grid gap-3 text-lg">
+                    <li class="flex items-start gap-3"><span class="text-accent mt-1">🧶</span><span>Receitas exclusivas de Natal prontas para vender</span></li>
+                    <li class="flex items-start gap-3"><span class="text-accent mt-1">🧶</span><span>Passo a passo detalhado para não errar nenhum ponto</span></li>
+                    <li class="flex items-start gap-3"><span class="text-accent mt-1">🧶</span><span>Inspirações criativas para suas postagens</span></li>
+                    <li class="flex items-start gap-3"><span class="text-accent mt-1">🧶</span><span>E motivação diária para manter a agulha sempre ativa 😍</span></li>
+                </ul>
+                <a href="#pricing" class="hidden lg:inline-flex items-center justify-center gap-2 rounded-md h-12 px-8 bg-accent text-accent-foreground shadow-lg transition-transform hover:scale-105 hover:bg-accent/90 animate-gentle-pulse-accent w-fit font-bold"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2 h-4 w-4 fill-yellow-900 text-yellow-600"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg> QUERO ENTRAR NA COMUNIDADE</a>
+                <p class="text-sm text-primary-foreground/70 italic text-center md:text-left">✨ “Cada ponto é um passo pro seu Natal mágico.” – Amiguruxos</p>
+            </div>
+            <div class="flex flex-col items-center justify-center space-y-4">
+                <h3 class="font-headline text-2xl font-bold">Olha o que as alunas já estão fazendo</h3>
+                <div class="w-full max-w-md rounded-lg shadow-2xl overflow-hidden border-4 border-white/20">
+                    <div style="padding:56.25% 0 0 0;position:relative;"><iframe style="position:absolute;top:0;left:0;width:100%;height:100%;" src="https://www.youtube.com/embed/POk6u0CuLNE?si=9JgsojxroIqYSBM4" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen=""></iframe></div>
+                </div>
+                <a href="#pricing" class="lg:hidden mt-8 inline-flex items-center justify-center gap-2 rounded-md h-12 px-8 bg-accent text-accent-foreground shadow-lg transition-transform hover:scale-105 hover:bg-accent/90 animate-gentle-pulse-accent font-bold"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2 h-4 w-4 fill-yellow-900 text-yellow-600"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg> QUERO ENTRAR NA COMUNIDADE</a>
+                <p class="text-sm text-primary-foreground/80">🔐 Exclusiva para alunas do curso.</p>
+            </div>
+        </div>
+      </section>
+
+
+      <!-- Testimonials Section -->
+      <section class="w-full py-12 md:py-24 lg:py-32 bg-primary/5">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="flex flex-col items-center justify-center space-y-4 text-center">
+                <div class="space-y-2">
+                    <div class="inline-block rounded-lg bg-primary/10 px-3 py-1 text-sm font-medium text-primary">Depoimentos de Alunas</div>
+                    <h2 class="font-headline text-3xl font-bold tracking-tighter sm:text-5xl text-primary">O que Nossas Alunas Dizem</h2>
+                    <p class="max-w-[900px] text-foreground/80 md:text-xl/relaxed">Nossas alunas não apenas aprendem a fazer crochê; elas constroem confiança, criam produtos lindos e alcançam seus objetivos financeiros.</p>
+                </div>
+            </div>
+            <!-- NOVO: Grid de Cards de Depoimento -->
+            <div class="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                <div class="bg-background p-6 rounded-lg shadow-lg border-l-4 border-accent transition-all-smooth hover:shadow-2xl hover:-translate-y-2">
+                    <div class="flex items-center mb-4">
+                        <img src="https://placehold.co/48x48/EAE7E1/4A5E4A?text=A" alt="Avatar da aluna Ana P." class="w-12 h-12 rounded-full mr-4 border-2 border-secondary">
+                        <div>
+                            <p class="font-bold text-primary">Ana P.</p>
+                            <p class="text-sm text-foreground/70">Aluna Verificada</p>
+                        </div>
+                    </div>
+                    <blockquote class="text-foreground/80 italic">"Nunca imaginei que conseguiria vender tanto no meu primeiro Natal! O curso é super didático e a comunidade me deu todo o apoio. Recomendo de olhos fechados!"</blockquote>
+                </div>
+                <div class="bg-background p-6 rounded-lg shadow-lg border-l-4 border-accent transition-all-smooth hover:shadow-2xl hover:-translate-y-2">
+                    <div class="flex items-center mb-4">
+                        <img src="https://placehold.co/48x48/EAE7E1/4A5E4A?text=M" alt="Avatar da aluna Mariana C." class="w-12 h-12 rounded-full mr-4 border-2 border-secondary">
+                        <div>
+                            <p class="font-bold text-primary">Mariana C.</p>
+                            <p class="text-sm text-foreground/70">Aluna Verificada</p>
+                        </div>
+                    </div>
+                    <blockquote class="text-foreground/80 italic">"Eu era totalmente iniciante e achei que não ia conseguir. As aulas são tão detalhadas que fiz minha primeira peça no mesmo dia! Já tenho uma lista de encomendas."</blockquote>
+                </div>
+                <div class="bg-background p-6 rounded-lg shadow-lg border-l-4 border-accent transition-all-smooth hover:shadow-2xl hover:-translate-y-2">
+                    <div class="flex items-center mb-4">
+                        <img src="https://placehold.co/48x48/EAE7E1/4A5E4A?text=J" alt="Avatar da aluna Juliana S." class="w-12 h-12 rounded-full mr-4 border-2 border-secondary">
+                        <div>
+                            <p class="font-bold text-primary">Juliana S.</p>
+                            <p class="text-sm text-foreground/70">Aluna Verificada</p>
+                        </div>
+                    </div>
+                    <blockquote class="text-foreground/80 italic">"O bônus de precificação valeu o curso inteiro! Eu sempre tive dificuldade em cobrar pelo meu trabalho, agora eu sei o valor das minhas peças. Obrigada!"</blockquote>
+                </div>
+            </div>
+        </div>
+      </section>
+
+      <!-- Bonus Section -->
+      <section class="w-full py-12 md:py-24 lg:py-32 bg-background">
+          <div class="container mx-auto px-4 md:px-6">
+              <div class="flex flex-col items-center justify-center space-y-4 text-center">
+                  <div class="space-y-2">
+                      <div class="inline-block rounded-lg bg-accent/20 px-3 py-1 text-sm font-medium text-accent"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-block w-4 h-4 mr-1 mb-0.5 text-accent"><rect x="3" y="8" width="18" height="4" rx="1"></rect><path d="M12 8v13"></path><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"></path><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"></path></svg>Bônus Exclusivos</div>
+                      <h2 class="font-headline text-3xl font-bold tracking-tighter sm:text-5xl text-primary">Inscreva-se Hoje e Leve Estes Presentes!</h2>
+                      <p class="max-w-[900px] text-foreground/80 md:text-xl/relaxed">Estes bônus foram criados para acelerar seu sucesso e estão inclusos gratuitamente na sua inscrição.</p>
+                  </div>
+              </div>
+              <div class="mx-auto grid items-stretch gap-8 sm:max-w-4xl sm:grid-cols-1 md:gap-12 lg:max-w-5xl lg:grid-cols-3 mt-12">
+                  <div class="rounded-lg border bg-card text-card-foreground shadow-lg hover:shadow-primary/20 transition-all-smooth text-center flex flex-col hover:-translate-y-2"><div class="p-6 flex-1 flex flex-col"><div class="text-5xl mb-4">💰</div><h3 class="text-xl font-bold font-headline text-primary">Curso de Precificação</h3><p class="text-sm text-foreground/80 my-2">De <span class="line-through">R$97</span> por <span class="font-bold text-accent">Grátis</span></p><p class="mt-2 text-foreground/80 flex-1">Aprenda a precificar seus amigurumis corretamente para garantir lucro e valor.</p></div></div>
+                  <div class="rounded-lg border bg-card text-card-foreground shadow-lg hover:shadow-primary/20 transition-all-smooth text-center flex flex-col hover:-translate-y-2"><div class="p-6 flex-1 flex flex-col"><div class="text-5xl mb-4">📝</div><h3 class="text-xl font-bold font-headline text-primary">Kit Papelaria Digital</h3><p class="text-sm text-foreground/80 my-2">De <span class="line-through">R$57</span> por <span class="font-bold text-accent">Grátis</span></p><p class="mt-2 text-foreground/80 flex-1">Organize-se com nosso kit digital para rastrear pedidos e produção.</p></div></div>
+                  <div class="rounded-lg border bg-card text-card-foreground shadow-lg hover:shadow-primary/20 transition-all-smooth text-center flex flex-col hover:-translate-y-2"><div class="p-6 flex-1 flex flex-col"><div class="text-5xl mb-4">📖</div><h3 class="text-xl font-bold font-headline text-primary">E-book Feliz Natal 2022</h3><p class="text-sm text-foreground/80 my-2">De <span class="line-through">R$97</span> por <span class="font-bold text-accent">Grátis</span></p><p class="mt-2 text-foreground/80 flex-1">Acesse a coleção completa do nosso curso de Natal anterior.</p></div></div>
+              </div>
+          </div>
+      </section>
+
+      <!-- Pricing Section -->
+      <section id="pricing" class="w-full py-12 md:py-24 lg:py-32 bg-primary/5">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="flex flex-col items-center justify-center space-y-4 text-center">
+                <div class="space-y-2">
+                    <h2 class="font-headline text-3xl font-bold tracking-tighter sm:text-5xl text-primary">Escolha Seu Acesso</h2>
+                    <p class="max-w-[900px] text-foreground/80 md:text-xl/relaxed">Desbloqueie seu potencial criativo com o plano ideal para você. Ambos incluem tudo que você precisa para o sucesso.</p>
+                </div>
+            </div>
+            <div class="mx-auto mt-16 grid max-w-7xl items-stretch gap-8 md:grid-cols-2 lg:grid-cols-3">
+                <div class="rounded-lg border-2 border-primary/50 bg-card text-card-foreground shadow-lg flex flex-col transition-all-smooth hover:shadow-2xl hover:-translate-y-2">
+                    <div class="flex flex-col space-y-1.5 p-6 pb-4">
+                        <h3 class="font-semibold tracking-tight font-headline text-3xl text-primary">Acesso Básico</h3>
+                        <p class="text-sm text-muted-foreground">O essencial para você começar a lucrar neste Natal.</p>
+                        <div class="pt-4">
+                            <p class="text-xl text-foreground/70">De <span class="line-through">R$47,90</span> por apenas</p>
+                            <p class="text-5xl font-bold text-primary">R$9,90</p>
+                        </div>
+                    </div>
+                    <div class="p-6 pt-0 grid gap-4 flex-1">
+                        <ul class="grid gap-3 text-left">
+                            <li class="flex items-start gap-3"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5 text-green-500 flex-shrink-0 mt-1"><path d="M20 6 9 17l-5-5"></path></svg><span class="text-foreground/90">+200 Receitas de Amigurumi</span></li>
+                            <li class="flex items-start gap-3"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5 text-green-500 flex-shrink-0 mt-1"><path d="M20 6 9 17l-5-5"></path></svg><span class="text-foreground/90">Acesso vitalício</span></li>
+
+                        </ul>
+                    </div>
+                    <div class="flex items-center p-6 pt-0 flex-col gap-4">
+                        <a href="https://checkout.imperiumpay.app/checkout/cmgfvb02r06ki6mfxwzdjzqaw?offer=UVQ34H2" class="inline-flex items-center justify-center gap-2 w-full rounded-md h-12 px-4 py-2 bg-secondary text-secondary-foreground hover:bg-secondary/90 font-bold text-lg transition-transform hover:scale-105">Quero as Receitas Básico</a>
+                        <p class="text-sm text-foreground/70 text-center">🎄 Ideal pra quem quer começar agora e já lucrar neste Natal!</p>
+                    </div>
+                </div>
+                <div class="rounded-lg border-2 border-purple bg-card text-card-foreground shadow-2xl shadow-purple-500/60 relative flex flex-col transition-all-smooth hover:shadow-purple-400/80 hover:-translate-y-2">
+                    <div class="absolute top-0 -translate-y-1/2 w-full flex justify-center"><div class="bg-purple text-purple-foreground px-4 py-1 rounded-full text-sm font-bold flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star w-4 h-4 text-amber-300"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg> Mais Popular</div></div>
+                    <div class="flex flex-col space-y-1.5 p-6 pb-4">
+                        <h3 class="font-semibold tracking-tight font-headline text-3xl text-purple">Acesso Completo</h3>
+                        <p class="text-sm text-muted-foreground">✨ Mais escolhido pelas alunas! Um Natal mágico pra sempre.</p>
+                        <div class="pt-4">
+                            <p class="text-xl text-foreground/70">De <span class="line-through">R$79,90</span> por apenas</p>
+                            <p class="text-5xl font-bold text-purple">R$19,90</p>
+                        </div>
+                    </div>
+                    <div class="p-6 pt-0 grid gap-4 flex-1">
+                        <p class="text-foreground/90 font-bold mb-2">Tudo do plano Básico, e mais:</p>
+                        <ul class="grid gap-3 text-left">
+                            <li class="flex items-start gap-3"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5 text-green-500 flex-shrink-0 mt-1"><path d="M20 6 9 17l-5-5"></path></svg><span class="text-foreground/90">+1.000 Receitas de Amigurumi</span></li>
+                            <li class="flex items-start gap-3"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5 text-green-500 flex-shrink-0 mt-1"><path d="M20 6 9 17l-5-5"></path></svg><span class="text-foreground/90">Vídeo Aulas</span></li>
+                            <li class="flex items-start gap-3"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5 text-green-500 flex-shrink-0 mt-1"><path d="M20 6 9 17l-5-5"></path></svg><span class="text-foreground/90">Acesso vitalício</span></li>
+
+                        </ul>
+                    </div>
+                    <div class="flex items-center p-6 pt-0 flex-col gap-4">
+                        <a href="https://checkout.imperiumpay.app/checkout/cmgfvb02r06ki6mfxwzdjzqaw?offer=V5IDANB" class="inline-flex items-center justify-center gap-2 w-full rounded-md font-bold py-2 bg-purple text-purple-foreground hover:bg-purple/90 h-14 px-10 text-lg transition-transform hover:scale-105">✨ Quero o Premium</a>
+                        <p class="text-sm text-foreground/70 text-center">💡 A escolha certa pra quem deseja vender mais e nunca ficar sem inspiração.</p>
+                    </div>
+                </div>
+                <div class="rounded-lg border-2 border-accent bg-card text-card-foreground shadow-2xl shadow-accent/40 relative flex flex-col transition-all-smooth hover:shadow-accent/60 hover:-translate-y-2">
+                    <div class="flex flex-col space-y-1.5 p-6 pb-4">
+                        <h3 class="font-semibold tracking-tight font-headline text-3xl text-accent">Acesso Super Premium</h3>
+                        <p class="text-sm text-muted-foreground">✨ Para quem leva o crochê a sério! Tudo que você precisa e mais.</p>
+                        <div class="pt-4">
+                            <p class="text-xl text-foreground/70">De <span class="line-through">R$97,90</span> por apenas</p>
+                            <p class="text-5xl font-bold text-accent">R$29,90</p>
+                        </div>
+                    </div>
+                    <div class="p-6 pt-0 grid gap-4 flex-1">
+                        <p class="text-foreground/90 font-bold mb-2">Tudo do plano Completo, e mais:</p>
+                        <ul class="grid gap-3 text-left">
+                            <li class="flex items-start gap-3"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5 text-green-500 flex-shrink-0 mt-1"><path d="M20 6 9 17l-5-5"></path></svg><span class="text-foreground/90"><strong>+9.000 Receitas</strong></span></li>
+                            <li class="flex items-start gap-3"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5 text-green-500 flex-shrink-0 mt-1"><path d="M20 6 9 17l-5-5"></path></svg><span class="text-foreground/90">Bônus Especial</span></li>
+                            <li class="flex items-start gap-3"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5 text-green-500 flex-shrink-0 mt-1"><path d="M20 6 9 17l-5-5"></path></svg><span class="text-foreground/90">Grupo de Network</span></li>
+                            <li class="flex items-start gap-3"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5 text-green-500 flex-shrink-0 mt-1"><path d="M20 6 9 17l-5-5"></path></svg><span class="text-foreground/90"><strong>Atualizações Frequentes</strong></span></li>
+                            <li class="flex items-start gap-3"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5 text-green-500 flex-shrink-0 mt-1"><path d="M20 6 9 17l-5-5"></path></svg><span class="text-foreground/90">Acesso vitalício</span></li>
+                        </ul>
+                    </div>
+                    <div class="flex items-center p-6 pt-0 flex-col gap-4">
+                        <a href="https://checkout.imperiumpay.app/checkout/cmgfvb02r06ki6mfxwzdjzqaw?offer=1UO31IN" class="inline-flex items-center justify-center gap-2 w-full rounded-md font-bold py-2 bg-accent text-accent-foreground hover:bg-accent/90 animate-gentle-pulse-accent h-14 px-10 text-lg transition-transform hover:scale-105">✨ Quero o Super Premium</a>
+                        <p class="text-sm text-foreground/70 text-center">💡 Feito sob medida pra quem quer transformar pontos em lucro e criatividade.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </section>
+
+      <!-- Guarantee Section -->
+       <section class="w-full py-12 md:py-24 lg:py-32 bg-background">
+          <div class="container mx-auto px-4 md:px-6">
+              <div class="max-w-3xl mx-auto">
+                  <div class="rounded-xl border-2 border-dashed border-accent/80 bg-accent/10 p-8 text-center">
+                      <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-accent text-accent-foreground mb-4">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-10 w-10"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg>
+                      </div>
+                      <h2 class="font-headline text-3xl font-bold text-primary">30 Dias de Garantia Incondicional</h2>
+                      <p class="mt-4 text-foreground/80 md:text-lg">Você tem 30 dias para explorar o conteúdo do curso, a comunidade e os bônus. Se por qualquer motivo sentir que não é para você, basta nos enviar um e-mail e nós devolveremos 100% do valor sem burocracia. Sua satisfação é nossa prioridade.</p>
+                  </div>
+              </div>
+          </div>
+       </section>
+      
+      <!-- FAQ Section -->
+      <section id="faq" class="w-full py-12 md:py-24 lg:py-32 bg-background">
+        <div class="container mx-auto px-4 md:px-6">
+          <div class="flex flex-col items-center justify-center space-y-4 text-center">
+            <div class="space-y-2">
+              <div class="inline-block rounded-lg bg-primary/10 px-3 py-1 text-sm font-medium text-primary">Tire suas Dúvidas</div>
+              <h2 class="font-headline text-3xl font-bold tracking-tighter sm:text-5xl text-primary">Perguntas Frequentes</h2>
+              <p class="max-w-[900px] text-foreground/80 md:text-xl/relaxed">Ainda tem alguma dúvida? Encontre as respostas aqui. Se precisar, nosso suporte está à disposição!</p>
+            </div>
+          </div>
+          <div class="mx-auto mt-12 max-w-3xl space-y-4">
+            <!-- FAQ Item 1 -->
+            <div class="faq-item overflow-hidden rounded-lg border bg-card text-card-foreground shadow-sm transition-all-smooth hover:shadow-xl">
+              <button class="faq-question flex w-full items-center justify-between p-6 text-left font-headline text-lg text-primary">
+                <span>Para quem é este curso?</span>
+                <svg class="faq-icon h-6 w-6 shrink-0 text-accent transition-transform duration-300" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
+              </button>
+              <div class="faq-answer" style="max-height: 0; transition: max-height 0.5s ease-in-out;">
+                <div class="p-6 pt-0 text-foreground/80">
+                  <p>O curso Feliz Natal Lucrativo foi pensado para <strong>todos os níveis</strong>! Se você é uma iniciante completa que nunca pegou numa agulha de crochê, vai aprender tudo do zero. Se você já tem experiência, vai se encantar com os padrões exclusivos e as dicas de vendas para profissionalizar seu trabalho.</p>
+                </div>
+              </div>
+            </div>
+            <!-- FAQ Item 2 -->
+            <div class="faq-item overflow-hidden rounded-lg border bg-card text-card-foreground shadow-sm transition-all-smooth hover:shadow-xl">
+              <button class="faq-question flex w-full items-center justify-between p-6 text-left font-headline text-lg text-primary">
+                <span>Quais materiais vou precisar?</span>
+                <svg class="faq-icon h-6 w-6 shrink-0 text-accent transition-transform duration-300" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
+              </button>
+              <div class="faq-answer" style="max-height: 0; transition: max-height 0.5s ease-in-out;">
+                <div class="p-6 pt-0 text-foreground/80">
+                  <p>Dentro do curso você encontrará uma aula específica com a lista completa de materiais recomendados. Basicamente, você vai precisar de fios de amigurumi nas cores natalinas, agulha de crochê, fibra para enchimento, tesoura e agulha de tapeçaria. São materiais fáceis de encontrar e de baixo custo!</p>
+                </div>
+              </div>
+            </div>
+              <!-- FAQ Item 3 -->
+            <div class="faq-item overflow-hidden rounded-lg border bg-card text-card-foreground shadow-sm transition-all-smooth hover:shadow-xl">
+              <button class="faq-question flex w-full items-center justify-between p-6 text-left font-headline text-lg text-primary">
+                <span>Como e quando vou receber o acesso?</span>
+                <svg class="faq-icon h-6 w-6 shrink-0 text-accent transition-transform duration-300" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
+              </button>
+              <div class="faq-answer" style="max-height: 0; transition: max-height 0.5s ease-in-out;">
+                <div class="p-6 pt-0 text-foreground/80">
+                  <p>O acesso é <strong>imediato</strong>! Assim que seu pagamento for confirmado, você receberá um e-mail com todas as instruções para acessar a plataforma do curso. Se o pagamento for via cartão de crédito ou Pix, a liberação acontece em poucos minutos. Para boletos, pode levar até 2 dias úteis.</p>
+                </div>
+              </div>
+            </div>
+              <!-- FAQ Item 4 -->
+            <div class="faq-item overflow-hidden rounded-lg border bg-card text-card-foreground shadow-sm transition-all-smooth hover:shadow-xl">
+              <button class="faq-question flex w-full items-center justify-between p-6 text-left font-headline text-lg text-primary">
+                <span>Por quanto tempo terei acesso às aulas?</span>
+                <svg class="faq-icon h-6 w-6 shrink-0 text-accent transition-transform duration-300" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
+              </button>
+              <div class="faq-answer" style="max-height: 0; transition: max-height 0.5s ease-in-out;">
+                <div class="p-6 pt-0 text-foreground/80">
+                  <p>Depende do plano que você escolher! O <strong>Plano Básico</strong> te dá acesso por 2 anos, tempo mais do que suficiente para você dominar todas as peças. Já o <strong>Plano Completo</strong> te oferece <strong>acesso vitalício</strong>, para você consultar as aulas e todas as futuras atualizações sempre que quiser!</p>
+                </div>
+              </div>
+            </div>
+              <!-- FAQ Item 5 -->
+            <div class="faq-item overflow-hidden rounded-lg border bg-card text-card-foreground shadow-sm transition-all-smooth hover:shadow-xl">
+              <button class="faq-question flex w-full items-center justify-between p-6 text-left font-headline text-lg text-primary">
+                <span>E se eu tiver dúvidas durante as aulas?</span>
+                <svg class="faq-icon h-6 w-6 shrink-0 text-accent transition-transform duration-300" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
+              </button>
+              <div class="faq-answer" style="max-height: 0; transition: max-height 0.5s ease-in-out;">
+                <div class="p-6 pt-0 text-foreground/80">
+                  <p>Você não estará sozinha! Temos uma comunidade exclusiva de alunas onde você pode tirar dúvidas, compartilhar seu progresso e interagir com outras crocheteiras. Além disso, as alunas do Plano Completo têm acesso à nossa mentora de IA, a Isabela IA, para tirar dúvidas a qualquer hora do dia!</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- About Section -->
+      <section id="about" class="w-full py-12 md:py-24 lg:py-32 bg-primary/5">
+        <div class="container mx-auto px-4 md:px-6">
+          <div class="grid gap-10 lg:grid-cols-2 lg:gap-16 items-center">
+            <div class="flex flex-col justify-center space-y-4">
+              <div class="space-y-2">
+                <div class="inline-block rounded-lg bg-primary/10 px-3 py-1 text-sm font-medium text-primary">Sobre a Expert</div>
+                <h2 class="font-headline text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-primary">Conheça Isabela Garcia</h2>
+                <p class="text-lg text-foreground/80">A Crocheteira Feliz</p>
+              </div>
+              <p class="max-w-[600px] text-foreground/90 md:text-xl/relaxed">
+                Isabela Garcia transformou sua paixão pelo crochê em um negócio próspero e na missão de capacitar outras pessoas. Ela acredita que o amigurumi é mais do que um artesanato; é um caminho para a independência financeira e o aumento da autoestima.
+              </p>
+              <div class="rounded-lg border bg-card/70 text-card-foreground shadow-sm">
+                <div class="p-6 grid gap-4">
+                  <div class="flex items-start gap-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-8 w-8 text-accent flex-shrink-0 mt-1"><path d="m15.477 12.89 1.515 8.526a.5.5 0 0 1-.81.47l-3.58-2.687a1 1 0 0 0-1.197 0l-3.586 2.686a.5.5 0 0 1-.81-.469l1.514-8.526"></path><circle cx="12" cy="8" r="6"></circle></svg>
+                    <div>
+                      <h3 class="font-bold text-primary">Método validado por +800 alunas</h3>
+                      <p class="text-foreground/80">Seu método de ensino foi comprovado por mais de 800 alunas que agora vendem suas criações com sucesso.</p>
+                    </div>
+                  </div>
+                  <div class="flex items-start gap-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-8 w-8 text-accent flex-shrink-0 mt-1"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>
+                    <div>
+                      <h3 class="font-bold text-primary">Nossa Missão</h3>
+                      <p class="text-foreground/80">Ajudá-la a transformar suas habilidades de crochê em uma fonte de renda, alegria e realização pessoal.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="flex items-center justify-center">
+              <div class="relative">
+                <img alt="Foto de Isabela Garcia, A Crocheteira Feliz." width="400" height="400" class="rounded-full object-cover shadow-2xl aspect-square" src="images/sFHC9jD.png">
+                <div class="absolute -bottom-4 -right-4 bg-white rounded-full p-4 shadow-lg">
+                  <svg class="w-12 h-12 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.5 1.5l-3 3L1 9l2 7 6 5 7-2 3-3 1.5-7.5L16 1l-5 2z"></path><path d="M22 2l-5.5 1.5"></path></svg>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    
+    <!-- Footer -->
+    <footer class="w-full bg-primary/10 py-12">
+      <div class="container mx-auto grid max-w-4xl grid-cols-1 gap-8 px-4 text-center md:px-6">
+        <div class="flex flex-col items-center gap-4">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-10 w-10 text-accent"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"></path><path d="M20 3v4"></path><path d="M22 5h-4"></path><path d="M4 17v2"></path><path d="M5 18H3"></path></svg>
+          <h2 class="font-headline text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Pronta para Começar Sua Jornada no Crochê Natalino?</h2>
+          <p class="max-w-[600px] text-foreground/80 md:text-xl">Não perca a chance de criar lindos amigurumis de Natal e transformar sua paixão em lucro. As vagas encerram em breve!</p>
+          <a href="#pricing" class="inline-flex items-center justify-center gap-2 rounded-md h-12 px-8 bg-accent text-accent-foreground hover:bg-accent/90 shadow-lg transition-transform hover:scale-105 font-bold">QUERO ME INSCREVER AGORA</a>
+        </div>
+        <div class="mt-8 text-sm text-foreground/60">
+          <p>© 2025 A Crocheteira Feliz. Todos os direitos reservados.</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- NOVO: Modal da Galeria (Lightbox) -->
+  <div id="gallery-modal" class="hidden fixed inset-0 bg-black/80 z-[10000] flex items-center justify-center p-4 transition-opacity duration-300">
+      <div class="relative bg-white p-4 rounded-lg shadow-2xl max-w-3xl w-full max-h-[90vh]">
+          <button id="modal-close" class="absolute -top-4 -right-4 bg-primary text-primary-foreground rounded-full w-10 h-10 flex items-center justify-center text-2xl font-bold hover:bg-primary/80 transition-colors">�</button>
+          <img id="modal-image" src="" alt="Amigurumi em destaque" class="w-full h-full object-contain max-h-[80vh]">
+      </div>
+  </div>
+
+  <!-- Botão de Mute -->
+  <button id="mute-button" class="fixed bottom-5 right-5 z-[10001] bg-primary text-primary-foreground w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:bg-primary/80 transition-colors">
+    <!-- Ícone de Som Ativado -->
+    <svg id="unmute-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6">
+      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+      <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+      <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+    </svg>
+    <!-- Ícone de Som Desativado -->
+    <svg id="mute-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6 hidden">
+      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+      <line x1="23" y1="9" x2="17" y2="15"></line>
+      <line x1="17" y1="9" x2="23" y2="15"></line>
+    </svg>
+  </button>
+
+  <script>
+    // Lógica do Countdown Timer
+    document.addEventListener('DOMContentLoaded', () => {
+      // Data final da contagem. O mês é baseado em 0 (Dezembro = 11).
+      // A data foi atualizada para 5 dias no futuro para garantir que o contador esteja ativo.
+      const countDownDate = new Date("Oct 9, 2025 23:59:59").getTime();
+      const countdownBanner = document.getElementById('countdown-banner');
+
+      const interval = setInterval(function() {
+        const now = new Date().getTime();
+        const distance = countDownDate - now;
+
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        if (document.getElementById("days")) {
+            document.getElementById("days").innerText = String(days).padStart(2, '0');
+            document.getElementById("hours").innerText = String(hours).padStart(2, '0');
+            document.getElementById("minutes").innerText = String(minutes).padStart(2, '0');
+            document.getElementById("seconds").innerText = String(seconds).padStart(2, '0');
+        }
+
+        if (distance < 0) {
+          clearInterval(interval);
+          if(countdownBanner) {
+            countdownBanner.innerHTML = `<p class="font-headline text-lg text-center md:text-xl">Inscrições encerradas!</p>`;
+          }
+        }
+      }, 1000);
+
+      // Lógica do Modal da Galeria
+      const galleryItems = document.querySelectorAll('.gallery-item');
+      const modal = document.getElementById('gallery-modal');
+      const modalImage = document.getElementById('modal-image');
+      const closeModalBtn = document.getElementById('modal-close');
+
+      galleryItems.forEach(item => {
+        item.addEventListener('click', () => {
+          const imgSrc = item.querySelector('img').src;
+          modalImage.src = imgSrc;
+          modal.classList.remove('hidden');
+        });
+      });
+
+      const closeModal = () => {
+        modal.classList.add('hidden');
+        modalImage.src = ""; // Limpa a imagem para evitar que a antiga apareça rapidamente
+      };
+
+      if (closeModalBtn) closeModalBtn.addEventListener('click', closeModal);
+      
+      // Fecha o modal ao clicar fora da imagem
+      if (modal) modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          closeModal();
+        }
+      });
+      
+      // Fecha o modal ao pressionar a tecla 'Escape'
+      document.addEventListener('keydown', (e) => {
+        if (e.key === "Escape" && !modal.classList.contains('hidden')) {
+            closeModal();
+        }
+      });
+
+      // Lógica do FAQ Accordion
+      const faqItems = document.querySelectorAll('.faq-item');
+      faqItems.forEach(item => {
+        const question = item.querySelector('.faq-question');
+        const answer = item.querySelector('.faq-answer');
+        const icon = item.querySelector('.faq-icon');
+
+        question.addEventListener('click', () => {
+          const isOpen = answer.style.maxHeight !== '0px';
+
+          // Fecha todos os itens
+          faqItems.forEach(i => {
+            i.querySelector('.faq-answer').style.maxHeight = '0px';
+            i.querySelector('.faq-icon').classList.remove('rotate-180');
+          });
+
+          // Abre o item clicado (se não estiver já aberto)
+          if (!isOpen) {
+            answer.style.maxHeight = answer.scrollHeight + 'px';
+            icon.classList.add('rotate-180');
+          }
+        });
+      });
+
+      // Lógica da Música de Fundo
+      const backgroundMusic = document.getElementById('background-music');
+      const muteButton = document.getElementById('mute-button');
+      const muteIcon = document.getElementById('mute-icon');
+      const unmuteIcon = document.getElementById('unmute-icon');
+      
+      if (backgroundMusic) backgroundMusic.volume = 0.1; // Volume baixo
+      
+      // Função para iniciar a música na primeira interação do usuário
+      function startMusicOnFirstInteraction() {
+        if (backgroundMusic && backgroundMusic.paused && backgroundMusic.querySelector('source').getAttribute('src')) {
+          const promise = backgroundMusic.play();
+          if (promise !== undefined) {
+            promise.catch(error => {
+              console.error("Erro ao tentar tocar a música:", error);
+              // Se ainda assim falhar, mantemos o estado visual de mudo
+              backgroundMusic.muted = true;
+              muteIcon.classList.remove('hidden');
+              unmuteIcon.classList.add('hidden');
+            });
+          }
+        }
+      }
+
+      // Adiciona um ouvinte para a primeira interação (clique ou toque)
+      document.body.addEventListener('click', startMusicOnFirstInteraction, { once: true });
+      document.body.addEventListener('touchend', startMusicOnFirstInteraction, { once: true });
+
+
+      if (muteButton) muteButton.addEventListener('click', () => {
+        if (!backgroundMusic.querySelector('source').getAttribute('src')) {
+            console.warn("Nenhuma fonte de áudio definida.");
+            return;
+        }
+        // Inverte o estado de 'muted'
+        backgroundMusic.muted = !backgroundMusic.muted;
+        
+        // Se a música estiver pausada e o usuário desmutar, toca a música
+        if (!backgroundMusic.muted && backgroundMusic.paused) {
+            backgroundMusic.play();
+        }
+
+        // Atualiza os ícones
+        if (backgroundMusic.muted) {
+          muteIcon.classList.remove('hidden');
+          unmuteIcon.classList.add('hidden');
+        } else {
+          muteIcon.classList.add('hidden');
+          unmuteIcon.classList.remove('hidden');
+        }
+      });
+
+      // Lógica do Efeito de Neve
+      const canvas = document.getElementById('snow-canvas');
+      if (canvas) {
+        const ctx = canvas.getContext('2d');
+
+        const setCanvasSize = () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        };
+
+        setCanvasSize();
+
+        let snowflakes = [];
+        const snowflakeCount = 150;
+
+        const initSnowflakes = () => {
+          snowflakes = [];
+          for (let i = 0; i < snowflakeCount; i++) {
+              snowflakes.push({
+                  x: Math.random() * canvas.width,
+                  y: Math.random() * canvas.height,
+                  radius: Math.random() * 3 + 1, // Raio de 1 a 4
+                  density: Math.random() * 0.5 + 0.2 // Velocidade
+              });
+          }
+        };
+
+        initSnowflakes();
+
+        function drawSnowflakes() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
+            ctx.beginPath();
+            for (let i = 0; i < snowflakes.length; i++) {
+                const flake = snowflakes[i];
+                ctx.moveTo(flake.x, flake.y);
+                ctx.arc(flake.x, flake.y, flake.radius, 0, Math.PI * 2, true);
+            }
+            ctx.fill();
+            updateSnowflakes();
+        }
+
+        function updateSnowflakes() {
+            for (let i = 0; i < snowflakes.length; i++) {
+                const flake = snowflakes[i];
+                flake.y += flake.density;
+
+                // Se o floco de neve sair da tela, reposicione no topo
+                if (flake.y > canvas.height) {
+                    flake.y = -5;
+                    flake.x = Math.random() * canvas.width;
+                }
+            }
+        }
+
+        let animationFrameId;
+        function snowLoop() {
+            drawSnowflakes();
+            animationFrameId = requestAnimationFrame(snowLoop);
+        }
+        
+        window.addEventListener('resize', () => {
+          setCanvasSize();
+          initSnowflakes(); // Reinicia os flocos para a nova dimensão
+        });
+        
+        // Otimização: Inicia a animação apenas quando a aba está visível
+        const handleVisibilityChange = () => {
+            if (document.hidden) {
+                cancelAnimationFrame(animationFrameId);
+            } else {
+                snowLoop();
+            }
+        };
+        
+        document.addEventListener("visibilitychange", handleVisibilityChange);
+
+        snowLoop();
+      }
+    });
+  </script>
+
+
+
+
+
+</body></html>
