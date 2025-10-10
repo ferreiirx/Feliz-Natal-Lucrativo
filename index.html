@@ -157,12 +157,11 @@ src="https://www.facebook.com/tr?id=2434933853570910&ev=PageView&noscript=1"
     <!-- Header com Countdown Timer -->
     <header class="bg-primary text-primary-foreground py-2 sticky top-0 z-50 shadow-md">
       <div id="countdown-banner" class="container mx-auto flex flex-col md:flex-row items-center justify-center gap-2 md:gap-4 px-4">
-        <p class="font-headline text-base text-center md:text-lg">Inscrições abertas! A oferta termina em:</p>
+        <p class="font-headline text-base text-center md:text-lg">Inscrições encerram em:</p>
         <div id="countdown-timer" class="flex items-center justify-center space-x-2 text-center font-bold">
-          <div class="p-1 bg-white/20 rounded-md min-w-[50px]"><span id="days" class="text-xl">00</span><span class="text-xs block">Dias</span></div>
-          <div class="p-1 bg-white/20 rounded-md min-w-[50px]"><span id="hours" class="text-xl">00</span><span class="text-xs block">Horas</span></div>
-          <div class="p-1 bg-white/20 rounded-md min-w-[50px]"><span id="minutes" class="text-xl">00</span><span class="text-xs block">Min</span></div>
-          <div class="p-1 bg-white/20 rounded-md min-w-[50px]"><span id="seconds" class="text-xl">00</span><span class="text-xs block">Seg</span></div>
+          <div class="p-1 bg-white/20 rounded-md min-w-[50px]"><span id="hours" class="text-xl">04</span><span class="text-xs block">Horas</span></div>
+          <div class="p-1 bg-white/20 rounded-md min-w-[50px]"><span id="minutes" class="text-xl">12</span><span class="text-xs block">Min</span></div>
+          <div class="p-1 bg-white/20 rounded-md min-w-[50px]"><span id="seconds" class="text-xl">48</span><span class="text-xs block">Seg</span></div>
         </div>
       </div>
     </header>
@@ -578,28 +577,25 @@ src="https://www.facebook.com/tr?id=2434933853570910&ev=PageView&noscript=1"
   <script>
     // Lógica do Countdown Timer
     document.addEventListener('DOMContentLoaded', () => {
-      // Data final da contagem. O mês é baseado em 0 (Dezembro = 11).
-      // A data foi atualizada para 5 dias no futuro para garantir que o contador esteja ativo.
-      const countDownDate = new Date("Oct 9, 2025 23:59:59").getTime();
       const countdownBanner = document.getElementById('countdown-banner');
+      
+      // Sempre inicia com 4 horas, 12 minutos e 48 segundos
+      let totalSeconds = (4 * 3600) + (12 * 60) + 48; // 4h 12m 48s em segundos
 
       const interval = setInterval(function() {
-        const now = new Date().getTime();
-        const distance = countDownDate - now;
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
 
-        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-        if (document.getElementById("days")) {
-            document.getElementById("days").innerText = String(days).padStart(2, '0');
+        if (document.getElementById("hours")) {
             document.getElementById("hours").innerText = String(hours).padStart(2, '0');
             document.getElementById("minutes").innerText = String(minutes).padStart(2, '0');
             document.getElementById("seconds").innerText = String(seconds).padStart(2, '0');
         }
 
-        if (distance < 0) {
+        totalSeconds--;
+
+        if (totalSeconds < 0) {
           clearInterval(interval);
           if(countdownBanner) {
             countdownBanner.innerHTML = `<p class="font-headline text-lg text-center md:text-xl">Inscrições encerradas!</p>`;
